@@ -3,10 +3,12 @@ using BenaudoOverlayManager.ViewModels;
 
 namespace BenaudoOverlayManager.Tests;
 
+[assembly: Parallelize(Scope = ExecutionScope.MethodLevel)]
+
 [TestClass]
 public sealed class LoginViewModelTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("pilote@example.com", true)]
     [DataRow("  pilote@example.com  ", true)]
     [DataRow("pilote", false)]
