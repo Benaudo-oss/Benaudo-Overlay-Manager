@@ -1,0 +1,51 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Color x:Key="BackgroundColor">#090D14</Color>
+  <Color x:Key="PanelColor">#101824</Color>
+  <Color x:Key="ElectricColor">#168BFF</Color>
+  <Color x:Key="ElectricLightColor">#54D8FF</Color>
+  <Color x:Key="RacingColor">#FF2438</Color>
+  <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
+  <SolidColorBrush x:Key="PanelBrush" Color="{StaticResource PanelColor}"/>
+  <SolidColorBrush x:Key="ElectricBrush" Color="{StaticResource ElectricColor}"/>
+  <SolidColorBrush x:Key="ElectricLightBrush" Color="{StaticResource ElectricLightColor}"/>
+  <SolidColorBrush x:Key="RacingBrush" Color="{StaticResource RacingColor}"/>
+  <SolidColorBrush x:Key="TextBrush" Color="#F5F9FF"/>
+  <SolidColorBrush x:Key="MutedBrush" Color="#8DA4BC"/>
+  <SolidColorBrush x:Key="FieldBrush" Color="#0B121D"/>
+
+  <Style x:Key="FieldStyle" TargetType="TextBox">
+    <Setter Property="Height" Value="48"/><Setter Property="Padding" Value="15,0"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/><Setter Property="FontSize" Value="14"/>
+    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/><Setter Property="CaretBrush" Value="{StaticResource ElectricLightBrush}"/>
+    <Setter Property="Background" Value="{StaticResource FieldBrush}"/><Setter Property="BorderBrush" Value="#27384D"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Style.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="BorderBrush" Value="{StaticResource ElectricLightBrush}"/></Trigger></Style.Triggers>
+  </Style>
+
+  <Style x:Key="PasswordStyle" TargetType="PasswordBox">
+    <Setter Property="Height" Value="48"/><Setter Property="Padding" Value="15,0"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/><Setter Property="FontSize" Value="14"/>
+    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/><Setter Property="CaretBrush" Value="{StaticResource ElectricLightBrush}"/>
+    <Setter Property="Background" Value="{StaticResource FieldBrush}"/><Setter Property="BorderBrush" Value="#27384D"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Style.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="BorderBrush" Value="{StaticResource ElectricLightBrush}"/></Trigger></Style.Triggers>
+  </Style>
+
+  <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+    <Setter Property="Height" Value="50"/><Setter Property="Foreground" Value="White"/>
+    <Setter Property="Background" Value="{StaticResource ElectricBrush}"/><Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="FontWeight" Value="Bold"/><Setter Property="FontSize" Value="14"/><Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+      <Border x:Name="Chrome" Background="{TemplateBinding Background}" CornerRadius="7">
+        <Grid><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <Border VerticalAlignment="Bottom" Height="2" Margin="20,0" Background="#75E7FF" Opacity=".8"/></Grid>
+      </Border>
+      <ControlTemplate.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Chrome" Property="Background" Value="#087AFF"/></Trigger>
+        <Trigger Property="IsPressed" Value="True"><Setter TargetName="Chrome" Property="Opacity" Value=".82"/></Trigger>
+        <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Chrome" Property="Opacity" Value=".42"/></Trigger>
+      </ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+</ResourceDictionary>

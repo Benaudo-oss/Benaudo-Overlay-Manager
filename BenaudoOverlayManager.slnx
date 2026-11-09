@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/BenaudoOverlayManager/BenaudoOverlayManager.csproj" />
+  <Project Path="tests/BenaudoOverlayManager.Tests/BenaudoOverlayManager.Tests.csproj" />
+</Solution>

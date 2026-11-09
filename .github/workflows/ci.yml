@@ -42,7 +42,11 @@ jobs:
 
       - name: Restaurer
         if: steps.project.outputs.found == 'true'
-        run: dotnet restore "${{ steps.project.outputs.path }}" --locked-mode
+        shell: pwsh
+        run: |
+          $locked = Get-ChildItem -Path . -File -Recurse -Filter packages.lock.json | Select-Object -First 1
+          if ($null -ne $locked) { dotnet restore "${{ steps.project.outputs.path }}" --locked-mode }
+          else { dotnet restore "${{ steps.project.outputs.path }}" }
 
       - name: Compiler
         if: steps.project.outputs.found == 'true'

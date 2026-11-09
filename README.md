@@ -2,7 +2,7 @@
 
 Application Windows d'overlays performants pour iRacing.
 
-> Le développement repart actuellement de zéro. Le dépôt contient d'abord l'infrastructure GitHub, la chaîne de validation et la préparation du système de mises à jour.
+Le développement de l'application a commencé par son écran de connexion et par une architecture d'authentification destinée à être reliée à un futur service commercial.
 
 ## Objectifs
 
@@ -20,7 +20,13 @@ La conception et la procédure complète sont décrites dans [docs/MISES-A-JOUR.
 
 ## État du projet
 
-Le code applicatif n'est pas encore présent. Les workflows de validation ignorent proprement la compilation jusqu'à l'ajout de la solution .NET.
+- socle C# / .NET 10 / WPF ;
+- écran de connexion français noir et bleu électrique ;
+- validation locale des champs et états d'attente/erreur ;
+- contrat d'authentification testable ;
+- refus sécurisé des connexions tant que le serveur commercial n'est pas configuré.
+
+Voir [l'architecture d'authentification](docs/AUTHENTIFICATION.md).
 
 ## Liens
 

@@ -1,0 +1,15 @@
+<Application x:Class="BenaudoOverlayManager.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:BenaudoOverlayManager.Converters"
+             StartupUri="Views/LoginWindow.xaml">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Themes/DarkTheme.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+      <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Inverse="True"/>
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>

@@ -75,7 +75,9 @@ jobs:
         run: |
           $solution = Get-ChildItem -Path . -File -Recurse -Include *.sln,*.slnx | Select-Object -First 1
           $target = if ($null -ne $solution) { $solution.FullName } else { $env:PROJECT_PATH }
-          dotnet restore $target --locked-mode
+          $locked = Get-ChildItem -Path . -File -Recurse -Filter packages.lock.json | Select-Object -First 1
+          if ($null -ne $locked) { dotnet restore $target --locked-mode }
+          else { dotnet restore $target }
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           dotnet test $target --configuration Release --no-restore
 
