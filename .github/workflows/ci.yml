@@ -1,0 +1,62 @@
+name: Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Détecter la solution
+        id: project
+        shell: pwsh
+        run: |
+          $solution = Get-ChildItem -Path . -File -Recurse -Include *.sln,*.slnx | Select-Object -First 1
+          if ($null -eq $solution) {
+            "found=false" >> $env:GITHUB_OUTPUT
+            Write-Host "Aucune solution .NET : validation de l'infrastructure uniquement."
+          } else {
+            "found=true" >> $env:GITHUB_OUTPUT
+            "path=$($solution.FullName)" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Restaurer
+        if: steps.project.outputs.found == 'true'
+        run: dotnet restore "${{ steps.project.outputs.path }}" --locked-mode
+
+      - name: Compiler
+        if: steps.project.outputs.found == 'true'
+        run: dotnet build "${{ steps.project.outputs.path }}" --configuration Release --no-restore
+
+      - name: Tester
+        if: steps.project.outputs.found == 'true'
+        run: dotnet test "${{ steps.project.outputs.path }}" --configuration Release --no-build --logger "trx;LogFileName=tests.trx"
+
+      - name: Publier les résultats des tests
+        if: always() && steps.project.outputs.found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultats-tests
+          path: "**/TestResults/*.trx"
+          if-no-files-found: ignore
+          retention-days: 14

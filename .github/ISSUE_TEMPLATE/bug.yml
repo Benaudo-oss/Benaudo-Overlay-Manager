@@ -1,0 +1,41 @@
+name: Signaler un bug
+description: Signaler un comportement incorrect ou un plantage.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Merci de ne jamais joindre de données personnelles ou sensibles.
+  - type: input
+    id: version
+    attributes:
+      label: Version de l'application
+      placeholder: "Exemple : 0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Version de Windows
+      placeholder: "Exemple : Windows 11 24H2"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Que s'est-il passé et que devait-il se passer ?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes de reproduction
+      placeholder: "1. Ouvrir…\n2. Cliquer…\n3. Observer…"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Journaux ou captures
+      description: Facultatif. Masquez toute information personnelle avant l'envoi.

@@ -1,0 +1,22 @@
+# .NET / Visual Studio
+bin/
+obj/
+.vs/
+TestResults/
+artifacts/
+Releases/
+*.user
+*.suo
+*.nupkg
+*.snupkg
+
+# Velopack
+releases.*.json
+*.nupkg
+Setup.exe
+Update.exe
+
+# Système
+.DS_Store
+Thumbs.db
+Desktop.ini

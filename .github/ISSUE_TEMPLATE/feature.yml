@@ -1,0 +1,24 @@
+name: Proposer une fonctionnalité
+description: Proposer une amélioration pour Benaudo Overlay Manager.
+title: "[Idée] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Besoin
+      description: Quel problème concret cette fonctionnalité résoudrait-elle ?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposition
+      description: Décrivez le fonctionnement souhaité.
+    validations:
+      required: true
+  - type: textarea
+    id: performance
+    attributes:
+      label: Impact sur les performances
+      description: Indiquez si cette idée peut affecter le CPU, le GPU, la mémoire ou les FPS d'iRacing.

@@ -1,0 +1,113 @@
+name: Publier une version Windows
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version SemVer sans le préfixe v
+        required: true
+        type: string
+      prerelease:
+        description: Publier comme préversion
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      PROJECT_PATH: src/BenaudoOverlayManager/BenaudoOverlayManager.csproj
+      PRODUCT_ID: BenaudoOverlayManager
+      PRODUCT_TITLE: Benaudo Overlay Manager
+      MAIN_EXE: BenaudoOverlayManager.exe
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Installer .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Déterminer la version
+        id: version
+        shell: pwsh
+        run: |
+          if ('${{ github.event_name }}' -eq 'workflow_dispatch') {
+            $version = '${{ inputs.version }}'
+            $tag = "v$version"
+            $prerelease = '${{ inputs.prerelease }}'.ToLowerInvariant()
+          } else {
+            $tag = '${{ github.ref_name }}'
+            $version = $tag.TrimStart('v')
+            $prerelease = ($version -match '-')
+          }
+          if ($version -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$') { throw "Version SemVer invalide : $version" }
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "prerelease=$($prerelease.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+
+      - name: Vérifier le projet
+        shell: pwsh
+        run: |
+          if (-not (Test-Path -LiteralPath $env:PROJECT_PATH)) {
+            throw "Le projet $env:PROJECT_PATH n'existe pas encore. Ajoutez l'application avant la première release."
+          }
+
+      - name: Restaurer et tester
+        shell: pwsh
+        run: |
+          $solution = Get-ChildItem -Path . -File -Recurse -Include *.sln,*.slnx | Select-Object -First 1
+          $target = if ($null -ne $solution) { $solution.FullName } else { $env:PROJECT_PATH }
+          dotnet restore $target --locked-mode
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet test $target --configuration Release --no-restore
+
+      - name: Publier l'application autonome
+        run: dotnet publish $env:PROJECT_PATH --configuration Release --runtime win-x64 --self-contained true --output artifacts/publish -p:Version=${{ steps.version.outputs.version }} -p:PublishSingleFile=false
+
+      - name: Installer Velopack
+        run: dotnet tool install --global vpk
+
+      - name: Créer l'installateur et les paquets de mise à jour
+        shell: pwsh
+        run: |
+          vpk pack --packId $env:PRODUCT_ID --packVersion '${{ steps.version.outputs.version }}' --packDir artifacts/publish --mainExe $env:MAIN_EXE --packTitle "$env:PRODUCT_TITLE" --outputDir artifacts/release
+
+      - name: Générer les sommes SHA-256
+        shell: pwsh
+        run: |
+          Get-ChildItem artifacts/release -File | ForEach-Object {
+            $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $_.FullName).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)" | Add-Content artifacts/release/SHA256SUMS.txt
+          }
+
+      - name: Attester la provenance des fichiers
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: artifacts/release/*
+
+      - name: Créer la Release GitHub
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $arguments = @('release', 'create', '${{ steps.version.outputs.tag }}', 'artifacts/release/*', '--repo', '${{ github.repository }}', '--generate-notes', '--title', "Benaudo Overlay Manager ${{ steps.version.outputs.version }}")
+          if ('${{ steps.version.outputs.prerelease }}' -eq 'true') { $arguments += '--prerelease' }
+          gh @arguments
